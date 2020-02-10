@@ -30,6 +30,7 @@ public class Robot extends TimedRobot {
     private final XboxController m_stick = new XboxController(0);
     double limelightturn;
     double kp = 0.4 / 28.5;
+  
     double ADCd = 1*1*0.47;
     static double Fd(double k, double ADCd, double V){       //k:常數 A:面積 D:空氣密度 Cd:阻力係數
       return k*ADCd*V*V;
@@ -40,15 +41,17 @@ public class Robot extends TimedRobot {
     NetworkTableEntry tx = table.getEntry("tx");
     NetworkTableEntry ty = table.getEntry("ty");
     NetworkTableEntry ta = table.getEntry("ta");
-    double x, y, area,d,p;
+    public double x, y, area,d,p;
     private VictorSPX L1 = new VictorSPX(1);
     private VictorSPX L2 = new VictorSPX(2);
     private VictorSPX R1 = new VictorSPX(3);
     private VictorSPX R2 = new VictorSPX(4);
-    double g = 9.8;
+    final double g = 9.8;
     int Vx = 1 ; //水平速度 定值 <--if不考慮阻力
     int t;
-    
+    final double V = 1;
+    final double h = 249.0;
+    double θ;
     /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
@@ -69,10 +72,9 @@ public class Robot extends TimedRobot {
     area = ta.getDouble(0.0);
     d = (205-73)/Math.tan(Math.toRadians(39
     +y));
-
     p = ((d-135)/135)*0.1 + 0.6;
-
-    //R2.set(ControlMode.PercentOutput, p);
+      
+  //R2.set(ControlMode.PercentOutput, p);
 
     //post to smart dashboard periodiXcally
     SmartDashboard.putNumber("LimelightX", x);
@@ -106,7 +108,6 @@ public class Robot extends TimedRobot {
     area = ta.getDouble(0.0);
 
     d = (205-73)/Math.tan(Math.toRadians(25+y));
-    
     limelightturn = kp*x;
     
     R1.set(ControlMode.PercentOutput, -limelightturn);
@@ -126,11 +127,14 @@ public class Robot extends TimedRobot {
 
   double angle = Math.sinh(Vx);
   double Vy = Math.cos(Math.toDegrees(angle));
-  double h = Vy*t - 0.5*g*t;
   double v = Vx*Vx + Vy*Vy ;
-  double V = Math.sqrt(v);
-  double Fd = Fd(1,ADCd,V);
-
+  double Fd = Fd(1,ADCd,0);
+  public double phy(double d){
+    double k = 1/(Math.sqrt((Math.pow(V,4)) * (Math.pow(h,2))+ Math.pow(d,2))); 
+    double rep = Math.acos(V*V*y*k);
+    return θ = 1; 
+  }
+    
   @Override
   public void testInit() {
   }
